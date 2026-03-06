@@ -83,3 +83,11 @@ jobs:
             docker compose pull
             docker compose up -d --remove-orphans
             docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+            docker compose ps
+            FRONTEND_CID=$(docker compose ps -q frontend)
+            if [ -z "$FRONTEND_CID" ]; then
+              echo "Frontend container not found in docker compose."
+              exit 1
+            fi
+            docker logs --tail 80 "$FRONTEND_CID"
+            curl -I --max-time 10 http://127.0.0.1:8081

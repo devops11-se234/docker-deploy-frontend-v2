@@ -3,5 +3,5 @@ services:
     image: ${DOCKER_HUB_USERNAME}/234-deploylab-frontend:latest
     pull_policy: always
     ports:
-      - "8081:80"
+      - "8080:80"
     restart: unless-stopped
