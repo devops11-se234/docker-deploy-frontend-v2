@@ -30,9 +30,9 @@ npm run preview
 ## Environment Configuration
 
 Three environments supported:
-- **Development** (`.env`): `http://localhost:8082/graphql`
-- **Development override** (`.env.development`): `http://localhost:8082/graphql`
-- **Production** (`.env.production`): `http://44.200.30.13:8082/graphql`
+- **Development** (`.env`): `http://localhost:8083/graphql`
+- **Development override** (`.env.development`): `http://localhost:8083/graphql`
+- **Production** (`.env.production`): `http://13.222.5.20:8082/graphql`
 
 ## Docker Deployment
 
@@ -69,4 +69,3 @@ src/
 Query: `getGradeFromScore($score: Float!)`
 
 Returns letter grade (A, B, C, D, or F) based on numeric score input.
-
