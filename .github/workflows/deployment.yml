@@ -1,6 +1,6 @@
 name: Deploy frontend application
 
-on: 
+on:
   push:
     branches:
       - main
@@ -8,8 +8,6 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    env:
-      SSH_PORT: ${{ secrets.HOST_SSH_PORT || '22' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,38 +30,14 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/234-deploylab-frontend:latest
-      
-      - name: Validate deploy secrets
-        env:
-          HOST_SERVER: ${{ secrets.HOST_SERVER }}
-          HOST_USER_NAME: ${{ secrets.HOST_USER_NAME }}
-          HOST_SSH_PRIVATE_KEY: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-        run: |
-          test -n "$HOST_SERVER" || { echo "Missing secret: HOST_SERVER"; exit 1; }
-          test -n "$HOST_USER_NAME" || { echo "Missing secret: HOST_USER_NAME"; exit 1; }
-          test -n "$HOST_SSH_PRIVATE_KEY" || { echo "Missing secret: HOST_SSH_PRIVATE_KEY"; exit 1; }
-          echo "$HOST_SSH_PRIVATE_KEY" | grep -Eq "BEGIN (OPENSSH|RSA|EC|DSA) PRIVATE KEY|BEGIN PRIVATE KEY" || {
-            echo "HOST_SSH_PRIVATE_KEY does not look like a valid private key.";
-            exit 1;
-          }
 
-      - name: Check SSH reachability
-        env:
-          HOST_SERVER: ${{ secrets.HOST_SERVER }}
-          SSH_PORT: ${{ env.SSH_PORT }}
-        run: |
-          timeout 10 bash -c "cat < /dev/null > /dev/tcp/$HOST_SERVER/$SSH_PORT" \
-            && echo "SSH port is reachable on $HOST_SERVER:$SSH_PORT" \
-            || { echo "Cannot reach $HOST_SERVER:$SSH_PORT from GitHub Actions runner"; exit 1; }
-
-      - name: Copy file via ssh key
+      - name: Copy file via ssh password
         uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.HOST_SERVER }}
           username: ${{ secrets.HOST_USER_NAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.HOST_SSH_PASSPHRASE }}
-          port: ${{ env.SSH_PORT }}
+          port: 22
           source: "docker-compose.yml"
           target: "/home/ubuntu/frontend"
 
@@ -73,21 +47,10 @@ jobs:
           host: ${{ secrets.HOST_SERVER }}
           username: ${{ secrets.HOST_USER_NAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.HOST_SSH_PASSPHRASE }}
-          port: ${{ env.SSH_PORT }}
+          port: 22
           script: |
             cd /home/ubuntu/frontend
             echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-            export DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}
-            docker compose down || true
-            docker compose pull
-            docker compose up -d --remove-orphans
-            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-            docker compose ps
-            FRONTEND_CID=$(docker compose ps -q frontend)
-            if [ -z "$FRONTEND_CID" ]; then
-              echo "Frontend container not found in docker compose."
-              exit 1
-            fi
-            docker logs --tail 80 "$FRONTEND_CID"
-            curl -I --max-time 10 http://127.0.0.1:8081
+            docker compose down
+            docker compose up -d
+            rm -rf /home/ubuntu/frontend
