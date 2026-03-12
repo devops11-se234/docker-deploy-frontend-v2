@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: ${DOCKER_HUB_USERNAME}/234-deploylab-frontend:latest
+    image: ${DOCKER_HUB_USERNAME:-guykongthongcmu}/234-deploylab-frontend:latest
     pull_policy: always
     ports:
       - "8081:80"

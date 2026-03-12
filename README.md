@@ -30,9 +30,9 @@ npm run preview
 ## Environment Configuration
 
 Three environments supported:
-- **Development** (`.env`): localhost:8080
-- **Staging** (`.env.development`): 13.250.41.39:8082
-- **Production** (`.env.production`): 52.74.162.217:8085
+- **Development** (`.env`): `http://localhost:8082/graphql`
+- **Development override** (`.env.development`): `http://localhost:8082/graphql`
+- **Production** (`.env.production`): `http://44.200.30.13:8082/graphql`
 
 ## Docker Deployment
 
@@ -56,7 +56,7 @@ src/
 
 ## Available Scripts
 
-- `npm run dev` - Start dev server (http://localhost:4200)
+- `npm run dev` - Start dev server (http://localhost:3000)
 - `npm run build` - Build for production
 - `npm run build:dev` - Build with staging environment
 - `npm run build:prod` - Build with production environment
@@ -69,5 +69,4 @@ src/
 Query: `getGradeFromScore($score: Float!)`
 
 Returns letter grade (A, B, C, D, or F) based on numeric score input.
-
 
