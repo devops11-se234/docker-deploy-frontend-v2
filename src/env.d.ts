@@ -2,7 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_GRAPHQL_URI: string
-  readonly VITE_SERVER_URI: string
+  readonly VITE_BACKEND_PORT: string
 }
 
 interface ImportMeta {

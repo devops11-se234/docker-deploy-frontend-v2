@@ -30,9 +30,9 @@ npm run preview
 ## Environment Configuration
 
 Three environments supported:
-- **Development** (`.env`): `http://localhost:8083/graphql`
-- **Development override** (`.env.development`): `http://localhost:8083/graphql`
-- **Production** (`.env.production`): `http://13.222.5.20:8082/graphql`
+- **Development** (`.env`): current host on port `8083`
+- **Development override** (`.env.development`): current host on port `8083`
+- **Production** (`.env.production`): current host on port `8082`
 
 ## Docker Deployment
 
@@ -63,6 +63,12 @@ src/
 - `npm run preview` - Preview production build
 - `npm run test` - Run unit tests
 - `npm run type-check` - Run TypeScript type checking
+
+When running on a VM:
+- Frontend dev is reachable at `http://<vm-ip>:3000`
+- Backend local GraphQL is reachable at `http://<vm-ip>:8083/graphql`
+- Docker frontend is reachable at `http://<vm-ip>:8081`
+- Docker backend GraphQL is reachable at `http://<vm-ip>:8082/graphql`
 
 ## GraphQL API
 
